@@ -18,6 +18,9 @@ public class Wallet {
     @OneToOne(mappedBy = "wallet",fetch = FetchType.LAZY)
     private User user;
 
+    public Wallet() {
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

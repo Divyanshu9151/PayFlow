@@ -19,6 +19,10 @@ public class User {
     private String email;
     private String password;
     private LocalDateTime createdAt;
+
+    public User() {
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
