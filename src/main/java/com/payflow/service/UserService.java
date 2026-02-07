@@ -4,6 +4,7 @@ import com.payflow.dto.UserCreateRequest;
 import com.payflow.dto.UserResponse;
 import com.payflow.entity.User;
 import com.payflow.entity.Wallet;
+import com.payflow.exception.EmailAlreadyExistsException;
 import com.payflow.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,10 @@ public class UserService {
         wallet.setBalance(BigDecimal.ZERO);
         wallet.setUser(user);
         user.setWallet(wallet);
+        if (userRepository.findByEmail(request.getEmail()).isPresent())
+        {
+            throw new EmailAlreadyExistsException("Email already registered");
+        }
         User savedUser=userRepository.save(user);
         return new UserResponse(
                 savedUser.getId()
