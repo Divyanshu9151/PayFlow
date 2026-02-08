@@ -15,8 +15,19 @@ public class Wallet {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @Version
+    private Long version;
+
     @OneToOne(mappedBy = "wallet",fetch = FetchType.LAZY)
     private User user;
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 
     public Wallet() {
     }
