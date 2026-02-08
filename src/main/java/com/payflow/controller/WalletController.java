@@ -21,16 +21,16 @@ public class WalletController {
     }
 
     @PostMapping("/{id}/credit")
-    public ResponseEntity<?>credit(@PathVariable Long id, @Valid @RequestBody WalletCreditRequest req)
+    public ResponseEntity<?>credit(@PathVariable Long id, @RequestHeader("Idempotence-Key") String key,@Valid @RequestBody WalletCreditRequest req)
     {
-        walletService.credit(id,req.getAmount());
+        walletService.credit(id,req.getAmount(),key);
         return ResponseEntity.ok(Map.of("status","credited"));
     }
 
     @PostMapping("/{id}/debit")
-    public ResponseEntity<?>debit(@PathVariable Long id, @Valid @RequestBody WalletDebitRequest req)
+    public ResponseEntity<?>debit(@PathVariable Long id,@RequestHeader("Idempotence-Key") String key ,@Valid @RequestBody WalletDebitRequest req)
     {
-        walletService.debit(id,req.getAmount());
+        walletService.debit(id,req.getAmount(),key);
         return ResponseEntity.ok(Map.of("status","debited"));
     }
 
