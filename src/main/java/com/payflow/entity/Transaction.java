@@ -7,14 +7,18 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "transactions",
+  indexes = {
+@Index(name = "idx_wallet_id", columnList = "wallet_id"),
+@Index(name = "idx_created_at", columnList = "createdAt")
+  })
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false,fetch = FetchType.LAZY)
     private Wallet wallet;
 
     @Enumerated(EnumType.STRING)
