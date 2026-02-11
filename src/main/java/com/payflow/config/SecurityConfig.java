@@ -16,8 +16,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers(
+                                "/users",
+                                "/wallets/**"
+                        ).permitAll()
+                        .anyRequest().denyAll()
                 )
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());

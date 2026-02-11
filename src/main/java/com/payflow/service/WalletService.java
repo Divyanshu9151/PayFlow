@@ -13,10 +13,12 @@ import com.sun.jdi.request.DuplicateRequestException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -32,11 +34,13 @@ public class WalletService{
 //        {
 //            return;
 //        }
+        log.info("Credit request received | walletId={} | amount={}", walletId, amount);
         Wallet wallet=getWallet(walletId);
         BigDecimal newBalance=wallet.getBalance().add(amount);
         wallet.setBalance(newBalance);
         transactionRepository.save(new Transaction(wallet, TransactionType.CREDIT,amount,newBalance));
         idempotencyRepository.save(new IdempotencyKey(idempotenceKey,hash(walletId,amount)));
+        log.info("Credit successful | walletId={} | newBalance={}", walletId, newBalance);
     }
 
 
@@ -46,15 +50,19 @@ public class WalletService{
 //        {
 //           return;
 //        }
+        log.info("Debit request received | walletId={} | amount={}", walletId, amount);
         Wallet wallet=getWallet(walletId);
         if(wallet.getBalance().compareTo(amount)<0)
         {
-            throw  new InsufficientBalanceException("Insufficient Balance");
+            log.warn("Debit failed - insufficient balance | walletId={} | balance={} | attempted={}",
+                    walletId, wallet.getBalance(), amount);
         }
        BigDecimal newBalance=wallet.getBalance().subtract(amount);
         wallet.setBalance(newBalance);
         transactionRepository.save(new Transaction(wallet,TransactionType.DEBIT,amount,newBalance));
         idempotencyRepository.save(new IdempotencyKey(idempotencyKey,hash(walletId,amount)));
+        log.info("Debit successful | walletId={} | newBalance={}", walletId, newBalance);
+
     }
 
     private String hash(Long walletId, BigDecimal amount) {
