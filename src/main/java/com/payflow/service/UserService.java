@@ -6,6 +6,7 @@ import com.payflow.entity.User;
 import com.payflow.entity.Wallet;
 import com.payflow.exception.EmailAlreadyExistsException;
 import com.payflow.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,6 @@ public class UserService {
     {
         Wallet wallet=new Wallet();
         wallet.setBalance(BigDecimal.ZERO);
-        wallet.setUser(user);
         user.setWallet(wallet);
         return userRepository.save(user);
     }
@@ -44,7 +44,6 @@ public class UserService {
 
         Wallet wallet = new Wallet();
         wallet.setBalance(BigDecimal.ZERO);
-        wallet.setUser(user);
         user.setWallet(wallet);
 
         User savedUser = userRepository.save(user);
@@ -56,6 +55,15 @@ public class UserService {
                 savedUser.getName(),
                 savedUser.getEmail()
         );
+    }
+
+    public UserResponse getUserById(Long id)
+    {
+        User user=userRepository.findById(id).orElseThrow(()->new EntityNotFoundException("User Not Found"));
+        return new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail());
     }
 
 }

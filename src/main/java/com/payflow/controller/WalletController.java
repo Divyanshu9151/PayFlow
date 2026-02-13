@@ -3,11 +3,13 @@ package com.payflow.controller;
 
 import com.payflow.dto.WalletCreditRequest;
 import com.payflow.dto.WalletDebitRequest;
+import com.payflow.dto.WalletResponse;
 import com.payflow.service.WalletService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,6 +34,10 @@ public class WalletController {
     {
         walletService.debit(id,req.getAmount(),key);
         return ResponseEntity.ok(Map.of("status","debited"));
+    }
+    @GetMapping
+    public List<WalletResponse>getAllWallets(){
+        return walletService.getAllWallet();
     }
 
 }

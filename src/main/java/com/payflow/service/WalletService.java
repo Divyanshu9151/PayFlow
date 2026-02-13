@@ -1,5 +1,6 @@
 package com.payflow.service;
 
+import com.payflow.dto.WalletResponse;
 import com.payflow.entity.IdempotencyKey;
 import com.payflow.entity.Transaction;
 import com.payflow.entity.Wallet;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -67,6 +69,10 @@ public class WalletService{
 
     private String hash(Long walletId, BigDecimal amount) {
         return walletId + ":" + amount;
+    }
+
+    public List<WalletResponse> getAllWallet(){
+        return walletRepository.findAll().stream().map(wallet -> new WalletResponse(wallet.getId(),wallet.getBalance())).toList();
     }
     public Wallet getWallet(Long walletId)
     {

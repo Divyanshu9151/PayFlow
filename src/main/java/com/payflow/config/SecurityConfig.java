@@ -17,7 +17,7 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/users",
+                                "/users/**",
                                 "/wallets/**"
                         ).permitAll()
                         .anyRequest().denyAll()

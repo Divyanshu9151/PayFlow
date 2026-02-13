@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Wallet {
@@ -18,8 +19,9 @@ public class Wallet {
     @Version
     private Long version;
 
-    @OneToOne(mappedBy = "wallet",fetch = FetchType.LAZY)
-    private User user;
+//    @OneToOne(mappedBy = "wallet",fetch = FetchType.LAZY)
+//    private User user;
+
 
     public Long getVersion() {
         return version;
@@ -74,11 +76,11 @@ public class Wallet {
         this.updatedAt = updatedAt;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+//    public User getUser() {
+//        return user;
+//    }
+//
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
 }
