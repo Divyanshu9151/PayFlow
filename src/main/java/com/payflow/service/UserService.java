@@ -8,6 +8,7 @@ import com.payflow.exception.EmailAlreadyExistsException;
 import com.payflow.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,18 +16,20 @@ import java.math.BigDecimal;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public User createUser(User user)
-    {
-        Wallet wallet=new Wallet();
-        wallet.setBalance(BigDecimal.ZERO);
-        user.setWallet(wallet);
-        return userRepository.save(user);
-    }
+//    public User createUser(User user)
+//    {
+//        Wallet wallet=new Wallet();
+//        wallet.setBalance(BigDecimal.ZERO);
+//        user.setWallet(wallet);
+//        return userRepository.save(user);
+//    }
 
     public UserResponse createUser(UserCreateRequest request) {
 
@@ -40,7 +43,7 @@ public class UserService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         Wallet wallet = new Wallet();
         wallet.setBalance(BigDecimal.ZERO);
@@ -65,5 +68,6 @@ public class UserService {
                 user.getName(),
                 user.getEmail());
     }
+
 
 }

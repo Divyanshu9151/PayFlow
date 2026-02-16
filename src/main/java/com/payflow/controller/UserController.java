@@ -17,12 +17,14 @@ public class UserController {
         this.userService=service;
     }
 
-    @PostMapping
-    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserCreateRequest request)
-    {
-        UserResponse response=userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+//this move to authController now
+//    @PostMapping
+//    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserCreateRequest request)
+//    {
+//        UserResponse response=userService.createUser(request);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse>getUser(@PathVariable Long id)
