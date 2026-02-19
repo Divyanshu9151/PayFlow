@@ -2,6 +2,7 @@ package com.payflow.entity;
 
 
 
+import com.payflow.enums.Role;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,19 @@ public class User {
     private String password;
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public User() {
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     @PrePersist

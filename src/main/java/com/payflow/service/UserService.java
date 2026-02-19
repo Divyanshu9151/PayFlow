@@ -4,6 +4,7 @@ import com.payflow.dto.UserCreateRequest;
 import com.payflow.dto.UserResponse;
 import com.payflow.entity.User;
 import com.payflow.entity.Wallet;
+import com.payflow.enums.Role;
 import com.payflow.exception.EmailAlreadyExistsException;
 import com.payflow.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -43,6 +44,7 @@ public class UserService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
+        user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         Wallet wallet = new Wallet();

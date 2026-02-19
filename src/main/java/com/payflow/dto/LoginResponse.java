@@ -5,5 +5,9 @@ package com.payflow.dto;
 //}
 
 
-public record LoginResponse(String token) {
+public record LoginResponse(
+        String accessToken,
+        String refreshToken
+) {
+
 }
