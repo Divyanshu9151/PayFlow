@@ -1,8 +1,6 @@
 package com.payflow.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +19,8 @@ public class JwtService {
                 .claim("type","ACCESS")
                 .setIssuedAt(new Date())
                 .setExpiration(
-                        new Date(System.currentTimeMillis() + 1000 * 60 * 60)
+                       new Date(System.currentTimeMillis() + 1000 * 60 * 60) // 1 hour
+                        //new Date(System.currentTimeMillis() + 1000 * 5) //5 seconds
                 )
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
@@ -43,7 +42,13 @@ public class JwtService {
         return extractAllClaims(token).getExpiration();
     }
     public String extractUsername(String token) {
-        return extractAllClaims(token).getSubject();
+        try {
+            return extractAllClaims(token).getSubject();
+        } catch (ExpiredJwtException e) {
+            throw new RuntimeException("Token expired");
+        } catch (JwtException e) {
+            throw new RuntimeException("Invalid token");
+        }
     }
 
     public String extractTokenType(String token)

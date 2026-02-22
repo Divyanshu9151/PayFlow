@@ -1,4 +1,6 @@
 package com.payflow.dto;
 
-public record RefreshRequest (String refreshToken){
+import jakarta.validation.constraints.NotBlank;
+
+public record RefreshRequest (@NotBlank(message = "Body must be present") String refreshToken){
 }

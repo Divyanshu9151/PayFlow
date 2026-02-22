@@ -1,5 +1,6 @@
 package com.payflow.config;
 
+import com.payflow.filter.CustomAuthenticationEntryPoint;
 import com.payflow.filter.JwtAuthenticationFilter;
 import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class SecurityConfig {
 
     @Autowired
     JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+    CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Bean
     public PasswordEncoder passwordEncoder()
     {
@@ -57,6 +61,7 @@ public class SecurityConfig {
                         .requestMatchers("/users/**", "/wallets/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(ex->ex.authenticationEntryPoint(customAuthenticationEntryPoint)) //handling exception now 401 return clears json
                 .httpBasic(Customizer.withDefaults()); // 🔥 IMPORTANT
 
         return http.build();

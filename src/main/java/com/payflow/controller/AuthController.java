@@ -8,6 +8,7 @@ import com.payflow.repository.UserRepository;
 import com.payflow.security.JwtService;
 import com.payflow.service.AuthService;
 import com.payflow.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,7 +42,7 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<LoginResponse> refresh(
-            @RequestBody RefreshRequest request
+          @Valid   @RequestBody RefreshRequest request
     ) {
         return ResponseEntity.ok(authService.refresh(request));
     }

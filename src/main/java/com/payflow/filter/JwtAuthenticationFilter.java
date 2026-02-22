@@ -30,33 +30,49 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        String path = request.getRequestURI();
 
-        String authHeader = request.getHeader("Authorization");
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        // 🔥 Skip auth endpoints
+        if (path.startsWith("/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
+      try {
+          String authHeader = request.getHeader("Authorization");
+          // Header missing ->continue
+          if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+              filterChain.doFilter(request, response);
+              return;
+          }
 
-        String token = authHeader.substring(7);
-        String email = jwtService.extractUsername(token);
-        String type= jwtService.extractTokenType(token);
+          String token = authHeader.substring(7);
+          //extract email
+          String email = jwtService.extractUsername(token);
+          String type = jwtService.extractTokenType(token);
 
-        if (email != null && "ACCESS".equals(type) && SecurityContextHolder.getContext().getAuthentication() == null) {
+          if (email != null && "ACCESS".equals(type) && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+              UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
+              UsernamePasswordAuthenticationToken authToken =
+                      new UsernamePasswordAuthenticationToken(
+                              userDetails,
+                              null,
+                              userDetails.getAuthorities()
+                      );
 
-            SecurityContextHolder.getContext()
-                    .setAuthentication(authToken);
-        }
+              SecurityContextHolder.getContext()
+                      .setAuthentication(authToken);
+          }
+      }catch (Exception e)
+      {
+          //If token is invalid/expired/tampered
+           SecurityContextHolder.clearContext();
+           response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+           response.getWriter().write("Invalid or Expired JWT token");
 
+           return; //stop further processing
+      }
         filterChain.doFilter(request, response);
     }
 }
