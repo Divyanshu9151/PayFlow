@@ -10,11 +10,13 @@ import com.payflow.exception.InsufficientBalanceException;
 import com.payflow.repository.IdempotencyRepository;
 import com.payflow.repository.TransactionRepository;
 import com.payflow.repository.WalletRepository;
-import com.sun.jdi.request.DuplicateRequestException;
+
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,7 +31,7 @@ public class WalletService{
     private final TransactionRepository transactionRepository;
     private final IdempotencyRepository idempotencyRepository;
 
-
+   @CacheEvict(value = "walletBalance",key="#walletId")
     public void credit(Long walletId, BigDecimal amount,String idempotenceKey)
     {
 //        if (idempotencyRepository.findByIdempotencyKey(idempotenceKey).isPresent())
@@ -45,6 +47,7 @@ public class WalletService{
         log.info("Credit successful | walletId={} | newBalance={}", walletId, newBalance);
     }
 
+    @CacheEvict(value = "walletBalance",key="#walletId")
 
     public void debit(Long walletId,BigDecimal amount,String idempotencyKey)
     {
@@ -74,9 +77,17 @@ public class WalletService{
     public List<WalletResponse> getAllWallet(){
         return walletRepository.findAll().stream().map(wallet -> new WalletResponse(wallet.getId(),wallet.getBalance())).toList();
     }
+
     public Wallet getWallet(Long walletId)
     {
         return walletRepository.findById(walletId).orElseThrow(()->new EntityNotFoundException("Wallet Not Found"));
     }
+
+    @Cacheable(value = "walletBalance",key="#walletId")
+    public BigDecimal getWalletBalance(Long walletId)
+    {
+       return walletRepository.findBalanceById(walletId).orElseThrow(()->new EntityNotFoundException("Wallet Not Found"));
+    }
+
 
 }

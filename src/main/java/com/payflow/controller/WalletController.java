@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,12 @@ public class WalletController {
     @GetMapping
     public List<WalletResponse>getAllWallets(){
         return walletService.getAllWallet();
+    }
+    @GetMapping("/{id}/balance")
+    public ResponseEntity<?>getWalletBalance(@PathVariable Long id)
+    {
+        BigDecimal balance=walletService.getWalletBalance(id);
+        return ResponseEntity.ok(new WalletResponse(id,balance));
     }
 
 }

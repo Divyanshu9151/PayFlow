@@ -33,4 +33,7 @@ spring:
 #logging:
  # level:
   #  org.hibernate.SQL: DEBUG
+logging:
+  file:
+    name: logs/payflow.log
 
