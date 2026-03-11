@@ -3,18 +3,21 @@ package com.payflow.service;
 import com.payflow.dto.WalletResponse;
 import com.payflow.entity.IdempotencyKey;
 import com.payflow.entity.Transaction;
+import com.payflow.entity.User;
 import com.payflow.entity.Wallet;
 import com.payflow.enums.TransactionType;
 import com.payflow.exception.GlobalExceptionHandler;
 import com.payflow.exception.InsufficientBalanceException;
 import com.payflow.repository.IdempotencyRepository;
 import com.payflow.repository.TransactionRepository;
+import com.payflow.repository.UserRepository;
 import com.payflow.repository.WalletRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,10 @@ public class WalletService{
     private final TransactionRepository transactionRepository;
     private final IdempotencyRepository idempotencyRepository;
 
+    @Autowired
+    NotificationService notificationService;
+    @Autowired
+    UserRepository userRepository;
    @CacheEvict(value = "walletBalance",key="#walletId")
     public void credit(Long walletId, BigDecimal amount,String idempotenceKey)
     {
@@ -44,6 +51,8 @@ public class WalletService{
         wallet.setBalance(newBalance);
         transactionRepository.save(new Transaction(wallet, TransactionType.CREDIT,amount,newBalance));
         idempotencyRepository.save(new IdempotencyKey(idempotenceKey,hash(walletId,amount)));
+        User user=userRepository.findByWalletId(walletId).orElseThrow(()->new RuntimeException("User Not Found"));
+        notificationService.sendTransactionEmail(user.getEmail());
         log.info("Credit successful | walletId={} | newBalance={}", walletId, newBalance);
     }
 
