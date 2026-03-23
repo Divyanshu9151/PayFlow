@@ -38,7 +38,7 @@ public class WalletService{
     NotificationService notificationService;
     @Autowired
     UserRepository userRepository;
-   @CacheEvict(value = "walletBalance",key="#walletId")
+    @CacheEvict(value = "walletBalance",key="#walletId")
     public void credit(Long walletId, BigDecimal amount,String idempotenceKey)
     {
 //        if (idempotencyRepository.findByIdempotencyKey(idempotenceKey).isPresent())
@@ -57,7 +57,6 @@ public class WalletService{
     }
 
     @CacheEvict(value = "walletBalance",key="#walletId")
-
     public void debit(Long walletId,BigDecimal amount,String idempotencyKey)
     {
 //        if (idempotencyRepository.findByIdempotencyKey(idempotencyKey).isPresent())
@@ -71,7 +70,7 @@ public class WalletService{
             log.warn("Debit failed - insufficient balance | walletId={} | balance={} | attempted={}",
                     walletId, wallet.getBalance(), amount);
         }
-       BigDecimal newBalance=wallet.getBalance().subtract(amount);
+        BigDecimal newBalance=wallet.getBalance().subtract(amount);
         wallet.setBalance(newBalance);
         transactionRepository.save(new Transaction(wallet,TransactionType.DEBIT,amount,newBalance));
         idempotencyRepository.save(new IdempotencyKey(idempotencyKey,hash(walletId,amount)));

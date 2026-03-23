@@ -30,6 +30,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  cache:
+    cache-names: walletBalance
+  caffeine:
+    spec: maximumSize=100,expireAfterWrite=5m
+
 #logging:
  # level:
   #  org.hibernate.SQL: DEBUG
