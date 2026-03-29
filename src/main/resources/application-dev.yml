@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    # for using docker db and run application from docker
+#    url: jdbc:mysql://mysql:3306/payflow   # ✅ changed
+#    username: root
+#    password: root       # ✅ change this too (explained below)
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+    # for using local db and Run application from Java file
+#    url: jdbc:mysql://localhost:3306/payflow
+#    username: root
+#    password: Asdfghjkl@123
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+  # for using docker db and run application from Java file  //Default and Recommended
+      url: jdbc:mysql://localhost:3307/payflow
+      username: root
+      password: root
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect   # ✅ add this
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  cache:
+    cache-names: walletBalance
+
+  caffeine:
+    spec: maximumSize=100,expireAfterWrite=5m
+
+logging:
+  file:
+    name: logs/payflow.log
