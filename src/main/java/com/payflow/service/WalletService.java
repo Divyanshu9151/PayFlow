@@ -5,6 +5,7 @@ import com.payflow.entity.IdempotencyKey;
 import com.payflow.entity.Transaction;
 import com.payflow.entity.User;
 import com.payflow.entity.Wallet;
+import com.payflow.enums.Category;
 import com.payflow.enums.TransactionType;
 import com.payflow.exception.GlobalExceptionHandler;
 import com.payflow.exception.InsufficientBalanceException;
@@ -35,18 +36,17 @@ public class WalletService{
     private final IdempotencyRepository idempotencyRepository;
     private final NotificationService notificationService;
     private final  UserRepository userRepository;
-
+    private final TransactionCategorizationService transactionCategorizationService;
     @CacheEvict(value = "walletBalance",key="#walletId")
-    public void credit(Long walletId, BigDecimal amount,String idempotenceKey)
+    public void credit(Long walletId, BigDecimal amount,String idempotenceKey,String description)
     {
-//        if (idempotencyRepository.findByIdempotencyKey(idempotenceKey).isPresent())
-//        {
-//            return;
-//        }
+
         log.info("Credit request received | walletId={} | amount={}", walletId, amount);
         Wallet wallet=getWallet(walletId);
         BigDecimal newBalance=wallet.getBalance().add(amount);
         wallet.setBalance(newBalance);
+        Category category=transactionCategorizationService.categorize(description,amount);
+        transactionRepository.save(new Transaction(wallet,TransactionType.CREDIT,amount,newBalance,category,description));
         transactionRepository.save(new Transaction(wallet, TransactionType.CREDIT,amount,newBalance));
         idempotencyRepository.save(new IdempotencyKey(idempotenceKey,hash(walletId,amount)));
         User user=userRepository.findByWalletId(walletId).orElseThrow(()->new RuntimeException("User Not Found"));
@@ -55,7 +55,7 @@ public class WalletService{
     }
 
     @CacheEvict(value = "walletBalance",key="#walletId")
-    public void debit(Long walletId,BigDecimal amount,String idempotencyKey)
+    public void debit(Long walletId,BigDecimal amount,String idempotencyKey,String description)
     {
 //        if (idempotencyRepository.findByIdempotencyKey(idempotencyKey).isPresent())
 //        {
@@ -72,6 +72,8 @@ public class WalletService{
         }
         BigDecimal newBalance=wallet.getBalance().subtract(amount);
         wallet.setBalance(newBalance);
+        Category category=transactionCategorizationService.categorize(description,amount);
+        transactionRepository.save(new Transaction(wallet,TransactionType.DEBIT,amount,newBalance,category,description));
         transactionRepository.save(new Transaction(wallet,TransactionType.DEBIT,amount,newBalance));
         idempotencyRepository.save(new IdempotencyKey(idempotencyKey,hash(walletId,amount)));
         log.info("Debit successful | walletId={} | newBalance={}", walletId, newBalance);

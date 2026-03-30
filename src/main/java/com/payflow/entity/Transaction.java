@@ -1,10 +1,12 @@
 package com.payflow.entity;
 
+import com.payflow.enums.Category;
 import com.payflow.enums.TransactionType;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "transactions",
@@ -31,6 +33,22 @@ public class Transaction {
     private BigDecimal balanceAfter;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
+    private String description;
+
+    public Transaction(Wallet wallet, TransactionType type, BigDecimal amount, BigDecimal balanceAfter, Category category,String description) {
+
+        this.wallet = wallet;
+        this.type = type;
+        this.amount = amount;
+        this.balanceAfter = balanceAfter;
+        this.createdAt = createdAt;
+        this.category = category;
+        this.description=description;
+    }
 
     protected Transaction(){}
     public Transaction(
