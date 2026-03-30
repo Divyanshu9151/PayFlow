@@ -555,3 +555,4 @@ org.springframework.data.mapping.PropertyReferenceException: No property 'descac
 2026-03-30T21:53:20.514+05:30 ERROR 68433 --- [http-nio-8080-exec-5] o.h.engine.jdbc.spi.SqlExceptionHelper   : Duplicate entry 'txn-1012' for key 'idempotency_keys.UK7lan5ijmyqxet1pjuhp6tvhoc'
 2026-03-30T21:53:25.560+05:30  INFO 68433 --- [http-nio-8080-exec-6] com.payflow.service.WalletService        : Credit request received | walletId=1 | amount=500
 2026-03-30T21:53:25.595+05:30  INFO 68433 --- [http-nio-8080-exec-6] com.payflow.service.WalletService        : Credit successful | walletId=1 | newBalance=604.00
+2026-03-30T22:47:19.945+05:30  WARN 68433 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2m12s623ms).

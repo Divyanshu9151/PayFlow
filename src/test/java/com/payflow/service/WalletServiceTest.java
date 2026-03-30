@@ -79,8 +79,7 @@ class WalletServiceTest {
         when(userRepository.findByWalletId(1L))
                 .thenReturn(Optional.of(user));
 
-        walletService.credit(1L, BigDecimal.valueOf(50), "key1");
-
+        walletService.credit(1L, BigDecimal.valueOf(50),  "abc","test description");
         // ✅ Verify balance updated
         assertEquals(BigDecimal.valueOf(150), wallet.getBalance());
 
@@ -103,7 +102,7 @@ class WalletServiceTest {
         when(walletRepository.findById(1L))
                 .thenReturn(Optional.of(wallet));
 
-        walletService.debit(1L, BigDecimal.valueOf(50), "key2");
+        walletService.debit(1L, BigDecimal.valueOf(50), "key2","test description");
 
         assertEquals(BigDecimal.valueOf(150), wallet.getBalance());
 
@@ -121,6 +120,6 @@ class WalletServiceTest {
                 .thenReturn(Optional.of(wallet));
 
         assertThrows(InsufficientBalanceException.class, () ->
-                walletService.debit(1L, BigDecimal.valueOf(100), "key3"));
+                walletService.debit(1L, BigDecimal.valueOf(100), "key3","test description"));
     }
 }
