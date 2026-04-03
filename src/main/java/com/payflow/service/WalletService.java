@@ -36,7 +36,8 @@ public class WalletService{
     private final IdempotencyRepository idempotencyRepository;
     private final NotificationService notificationService;
     private final  UserRepository userRepository;
-    private final TransactionCategorizationService transactionCategorizationService;
+    //private final TransactionCategorizationService transactionCategorizationService;
+    private final AIService aiService;
     @CacheEvict(value = "walletBalance",key="#walletId")
     public void credit(Long walletId, BigDecimal amount,String idempotenceKey,String description)
     {
@@ -45,7 +46,7 @@ public class WalletService{
         Wallet wallet=getWallet(walletId);
         BigDecimal newBalance=wallet.getBalance().add(amount);
         wallet.setBalance(newBalance);
-        Category category=transactionCategorizationService.categorize(description,amount);
+        Category category=aiService.categorize(description);
         transactionRepository.save(new Transaction(wallet,TransactionType.CREDIT,amount,newBalance,category,description));
         transactionRepository.save(new Transaction(wallet, TransactionType.CREDIT,amount,newBalance));
         idempotencyRepository.save(new IdempotencyKey(idempotenceKey,hash(walletId,amount)));
@@ -72,7 +73,7 @@ public class WalletService{
         }
         BigDecimal newBalance=wallet.getBalance().subtract(amount);
         wallet.setBalance(newBalance);
-        Category category=transactionCategorizationService.categorize(description,amount);
+        Category category=aiService.categorize(description);
         transactionRepository.save(new Transaction(wallet,TransactionType.DEBIT,amount,newBalance,category,description));
         transactionRepository.save(new Transaction(wallet,TransactionType.DEBIT,amount,newBalance));
         idempotencyRepository.save(new IdempotencyKey(idempotencyKey,hash(walletId,amount)));
@@ -96,6 +97,7 @@ public class WalletService{
     @Cacheable(value = "walletBalance",key="#walletId")
     public BigDecimal getWalletBalance(Long walletId)
     {
+        log.info("Fetching balance from DB for walletId={}",walletId);
        return walletRepository.findBalanceById(walletId).orElseThrow(()->new EntityNotFoundException("Wallet Not Found"));
     }
 

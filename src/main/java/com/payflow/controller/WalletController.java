@@ -6,13 +6,14 @@ import com.payflow.dto.WalletDebitRequest;
 import com.payflow.dto.WalletResponse;
 import com.payflow.service.WalletService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-
+@Slf4j
 @RestController
 @RequestMapping("/wallets")
 public class WalletController {
