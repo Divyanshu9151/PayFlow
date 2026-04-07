@@ -37,6 +37,22 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     private String description;
 
     public Transaction(Wallet wallet, TransactionType type, BigDecimal amount, BigDecimal balanceAfter, Category category,String description) {

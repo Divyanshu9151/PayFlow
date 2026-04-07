@@ -1,4 +1,9 @@
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   datasource:
     # for using docker db and run application from docker
 #    url: jdbc:mysql://mysql:3306/payflow   # ✅ changed
@@ -38,3 +43,11 @@ spring:
 logging:
   file:
     name: logs/payflow.log
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
