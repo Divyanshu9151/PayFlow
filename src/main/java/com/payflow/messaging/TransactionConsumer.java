@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-
 public class TransactionConsumer {
     @RabbitListener(queues = "transaction.queue")
     public void consume(String message)

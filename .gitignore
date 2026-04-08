@@ -31,3 +31,22 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Logs
+logs/
+*.log
+
+# Spring Boot logs
+*.log.*
+log/
+
+# Build files
+target/
+build/
+
+# OS files
+.DS_Store
+
+# IDE
+.idea/
+*.iml
